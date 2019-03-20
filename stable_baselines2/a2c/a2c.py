@@ -191,13 +191,48 @@ class A2C(ActorCriticRLModel):
             if self.full_tensorboard_log and (1 + update) % 10 == 0:
                 run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
                 run_metadata = tf.RunMetadata()
+
                 summary, policy_loss, value_loss, policy_entropy, _ = self.sess.run(
-                    [self.summary, self.pg_loss, self.vf_loss, self.entropy, self.apply_backprop],
-                    td_map, options=run_options, run_metadata=run_metadata)
-                writer.add_run_metadata(run_metadata, 'step%d' % (update * (self.n_batch + 1)))
+                    [self.sum    self.vf_coef = vf_coef
+        self.ent_coef = ent_coef
+        self.max_grad_norm = max_grad_norm
+        self.alpha = alpha
+        self.epsilon = epsilon
+        self.lr_schedule = lr_schedule
+        self.learning_rate = learning_rate
+        self.tensorboard_log = tensorboard_log
+        self.full_tensorboard_log = full_tensorboard_logmary, self.pg_loss, self.vf_loss, self.entropy, self.apply_backprop],
+                    td_map, o    self.vf_coef = vf_coef
+        self.ent_coef = ent_coef
+        self.max_grad_norm = max_grad_norm
+        self.alpha = alpha
+        self.epsilon = epsilon
+        self.lr_schedule = lr_schedule
+        self.learning_rate = learning_rate
+        self.tensorboard_log = tensorboard_log
+        self.full_tensorboard_log = full_tensorboard_logptions=run_options, run_metadata=run_metadata)
+    self.vf_coef = vf_coef
+        self.ent_coef = ent_coef
+        self.max_grad_norm = max_grad_norm
+        self.alpha = alpha
+        self.epsilon = epsilon
+        self.lr_schedule = lr_schedule
+        self.learning_rate = learning_rate
+        self.tensorboard_log = tensorboard_log
+        self.full_tensorboard_log = full_tensorboard_log
+                writer.add_ru    self.vf_coef = vf_coef
+        self.ent_coef = ent_coef
+        self.max_grad_norm = max_grad_norm
+        self.alpha = alpha
+        self.epsilon = epsilon
+        self.lr_schedule = lr_schedule
+        self.learning_rate = learning_rate
+        self.tensorboard_log = tensorboard_log
+        self.full_tensorboard_log = full_tensorboard_logn_metadata(run_metadata, 'step%d' % (update * (self.n_batch + 1)))
             else:
                 summary, policy_loss, value_loss, policy_entropy, _ = self.sess.run(
                     [self.summary, self.pg_loss, self.vf_loss, self.entropy, self.apply_backprop], td_map)
+
             writer.add_summary(summary, update * (self.n_batch + 1))
 
         else:

@@ -25,9 +25,9 @@ write_route_file('nets/2way-single-intersection/single-intersection-gen.rou.xml'
 n_cpu = 2
 env = SubprocVecEnv([lambda: SumoEnvironment(net_file='nets/2way-single-intersection/single-intersection.net.xml',
                                     route_file='nets/2way-single-intersection/single-intersection-gen.rou.xml',
-                                    out_csv_name='outputs/2way-single-intersection/a2c-contexts-5s-vmvm-400k',
+                                    out_csv_name='outputs/2way-single-intersection/a2c-contexts-vmvm-400k',
                                     single_agent=True,
-                                    use_gui=False,
+                                    use_gui=True,
                                     num_seconds=400000,
                                     min_green=5,
                                     time_to_load_vehicles=120,
@@ -41,8 +41,9 @@ env = SubprocVecEnv([lambda: SumoEnvironment(net_file='nets/2way-single-intersec
                                         traci.trafficlight.Phase(2000, "rrryyrrrryyr"),
                                         traci.trafficlight.Phase(32000, "rrrrrGrrrrrG"), 
                                         traci.trafficlight.Phase(2000, "rrrrryrrrrry")
-                                        ],
-                                    n = i) for i in range(n_cpu)])
+                                        ]) for i in range(n_cpu)])
 
 model = A2C(MlpPolicy, env, verbose=1, learning_rate=0.0001, lr_schedule='constant')
 model.learn(total_timesteps=1000000)
+
+model.save("a2c_tsc")

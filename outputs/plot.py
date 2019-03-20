@@ -75,7 +75,7 @@ if __name__ == '__main__':
                 main_df = pd.concat((main_df, df))
 
         steps = main_df.groupby('step_time').total_stopped.mean().keys()
-        mean = moving_average(main_df.groupby('step_time').mean()['reward'], window_size=args.window)
+        mean = moving_average(main_df.groupby('step_time').mean()['total_stopped'], window_size=args.window)
         #sem = moving_average(main_df.groupby('step_time').sem()['total_wait_time'], window_size=args.window)
         std = moving_average(main_df.groupby('step_time').std()['total_wait_time'], window_size=args.window)
 
