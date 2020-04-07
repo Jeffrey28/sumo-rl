@@ -29,10 +29,10 @@ if __name__ == '__main__':
                           time_to_load_vehicles=300,
                           max_depart_delay=0,
                           phases=[
-                            traci.trafficlight.Phase(35000, 35000, 35000, "GGGrrr"),   # north-south
-                            traci.trafficlight.Phase(2000, 2000, 2000, "yyyrrr"),
-                            traci.trafficlight.Phase(35000, 35000, 35000, "rrrGGG"),   # west-east
-                            traci.trafficlight.Phase(2000, 2000, 2000, "rrryyy")
+                            traci.trafficlight.Phase(35, "GGGrrr"),   # north-south
+                            traci.trafficlight.Phase(2, "yyyrrr"),
+                            traci.trafficlight.Phase(35, "rrrGGG"),   # west-east
+                            traci.trafficlight.Phase(2, "rrryyy")
                             ])
 
     for run in range(1, runs+1):
@@ -48,11 +48,11 @@ if __name__ == '__main__':
         while not done['__all__']:
             actions = {ts: ql_agents[ts].act() for ts in ql_agents.keys()}
 
-            s, r, done, info = env.step(actions=actions)
+            s, r, done, info = env.step(action=actions)
             infos.append(info)
 
             for agent_id in ql_agents.keys():
-                ql_agents[agent_id].learn(new_state=env.encode(s[agent_id]), reward=r[agent_id])
+                ql_agents[agent_id].learn(next_state=env.encode(s[agent_id]), reward=r[agent_id])
 
         env.close()
 

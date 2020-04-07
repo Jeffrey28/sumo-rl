@@ -27,20 +27,20 @@ env = SubprocVecEnv([lambda: SumoEnvironment(net_file='nets/2way-single-intersec
                                     route_file='nets/2way-single-intersection/single-intersection-gen.rou.xml',
                                     out_csv_name='outputs/2way-single-intersection/a2c-contexts-5s-vmvm-400k',
                                     single_agent=True,
-                                    use_gui=False,
+                                    use_gui=True,
                                     num_seconds=400000,
                                     min_green=5,
                                     time_to_load_vehicles=120,
                                     max_depart_delay=0,
                                     phases=[
-                                        traci.trafficlight.Phase(32000, "GGrrrrGGrrrr"),  
-                                        traci.trafficlight.Phase(2000, "yyrrrryyrrrr"),
-                                        traci.trafficlight.Phase(32000, "rrGrrrrrGrrr"),   
-                                        traci.trafficlight.Phase(2000, "rryrrrrryrrr"),
-                                        traci.trafficlight.Phase(32000, "rrrGGrrrrGGr"),   
-                                        traci.trafficlight.Phase(2000, "rrryyrrrryyr"),
-                                        traci.trafficlight.Phase(32000, "rrrrrGrrrrrG"), 
-                                        traci.trafficlight.Phase(2000, "rrrrryrrrrry")
+                                        traci.trafficlight.Phase(32, "GGrrrrGGrrrr"),  
+                                        traci.trafficlight.Phase(2, "yyrrrryyrrrr"),
+                                        traci.trafficlight.Phase(32, "rrGrrrrrGrrr"),   
+                                        traci.trafficlight.Phase(2, "rryrrrrryrrr"),
+                                        traci.trafficlight.Phase(32, "rrrGGrrrrGGr"),   
+                                        traci.trafficlight.Phase(2, "rrryyrrrryyr"),
+                                        traci.trafficlight.Phase(32, "rrrrrGrrrrrG"), 
+                                        traci.trafficlight.Phase(2, "rrrrryrrrrry")
                                         ]) for i in range(n_cpu)])
 
 model = A2C(MlpPolicy, env, verbose=1, learning_rate=0.0001, lr_schedule='constant')

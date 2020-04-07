@@ -1,6 +1,6 @@
 # SUMO-RL
 
-SUMO-RL provides a simple interface to instantiate Reinforcement Learning environments with [SUMO](https://github.com/eclipse/sumo) for Traffic Signal Control. 
+SUMO-RL provides a simple interface to instantiate Reinforcement Learning environments with [SUMO v.1.5.0](https://github.com/eclipse/sumo) for Traffic Signal Control. 
 
 The main class [SumoEnvironment](https://github.com/LucasAlegre/sumo-rl/blob/master/environment/env.py) inherits [MultiAgentEnv](https://github.com/ray-project/ray/blob/master/python/ray/rllib/env/multi_agent_env.py) from [RLlib](https://github.com/ray-project/ray/tree/master/python/ray/rllib).  
 If instantiated with parameter 'single-agent=True', it behaves like a regular [Gym Env](https://github.com/openai/gym/blob/master/gym/core.py) from [OpenAI](https://github.com/openai).  
@@ -9,15 +9,17 @@ If instantiated with parameter 'single-agent=True', it behaves like a regular [G
 Goals of this repository:
 - Provide a simple interface to work with Reinforcement Learning for Traffic Signal Control using SUMO.
 - Support Multiagent RL.
-- Compatibility with Gym Env and popular RL libraries like openaAI baselines and RLlib.
-- Easy customisation: state and reward definitions are easily modifiable. 
+- Compatibility with Gym Env and popular RL libraries like openAI baselines and RLlib.
+- Easy customisation: state and reward definitions are easily modifiable.
 
 ## Install
 
-### To install SUMO:
+### To install SUMO v1.5.0:
 
 ```
-sudo apt-get install sumo sumo-tools sumo-doc
+sudo add-apt-repository ppa:sumo/stable
+sudo apt-get update
+sudo apt-get install sumo sumo-tools sumo-doc 
 ```
 Don't forget to set SUMO_HOME variable (default sumo installation path is /usr/share/sumo)
 ```
@@ -51,8 +53,9 @@ python3 experiments/a2c_2way-single-intersection.py
 
 ### To plot results:
 ```
-python3 outputs/plot.py -f outputs/single-intersection_rewardqueue_run1.csv
+python3 outputs/plot.py -f outputs/2way-single-intersection/a3c 
 ```
+![alt text](https://github.com/LucasAlegre/sumo-rl/blob/master/outputs/result.png)
 
 ## Cite
 If you use this repository in your research, please cite:
@@ -66,4 +69,3 @@ If you use this repository in your research, please cite:
     howpublished = {\url{https://github.com/LucasAlegre/sumo-rl}},
 }
 ```
-

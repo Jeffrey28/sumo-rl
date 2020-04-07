@@ -32,13 +32,11 @@ if __name__ == '__main__':
     prs.add_argument("-fixed", action="store_true", default=False, help="Run with fixed timing traffic signals.\n")
     prs.add_argument("-ns", dest="ns", type=int, default=42, required=False, help="Fixed green time for NS.\n")
     prs.add_argument("-we", dest="we", type=int, default=42, required=False, help="Fixed green time for WE.\n")
-    prs.add_argument("-s", dest="seconds", type=int, default=20000, required=False, help="Number of simulation seconds.\n")
+    prs.add_argument("-s", dest="seconds", type=int, default=100000, required=False, help="Number of simulation seconds.\n")
     prs.add_argument("-r", dest="reward", type=str, default='wait', required=False, help="Reward function: [-r queue] for average queue reward or [-r wait] for waiting time reward.\n")
     prs.add_argument("-v", action="store_true", default=False, help="Print experience tuple.\n")
     prs.add_argument("-runs", dest="runs", type=int, default=1, help="Number of runs.\n")
     args = prs.parse_args()
-    ns = args.ns * 1000
-    we = args.we * 1000
     experiment_time = str(datetime.now()).split('.')[0]
     out_csv = 'outputs/single-intersection/{}_alpha{}_gamma{}_eps{}_decay{}_reward{}'.format(experiment_time, args.alpha, args.gamma, args.epsilon, args.decay, args.reward)
 
@@ -51,10 +49,10 @@ if __name__ == '__main__':
                           max_green=args.max_green,
                           max_depart_delay=0,
                           phases=[
-                            traci.trafficlight.Phase(ns, "GGrr"),   # north-south
-                            traci.trafficlight.Phase(2000, "yyrr"),
-                            traci.trafficlight.Phase(we, "rrGG"),   # west-east
-                            traci.trafficlight.Phase(2000, "rryy")
+                            traci.trafficlight.Phase(args.ns, "GGrr"),   # north-south
+                            traci.trafficlight.Phase(2, "yyrr"),
+                            traci.trafficlight.Phase(args.we, "rrGG"),   # west-east
+                            traci.trafficlight.Phase(2, "rryy")
                             ])
     if args.reward == 'queue':
         env._compute_rewards = env._queue_average_reward
@@ -79,16 +77,15 @@ if __name__ == '__main__':
             while not done['__all__']:
                 actions = {ts: ql_agents[ts].act() for ts in ql_agents.keys()}
 
-                s, r, done, _ = env.step(actions=actions)
+                s, r, done, _ = env.step(action=actions)
 
                 if args.v:
                     print('s=', env.radix_decode(ql_agents['t'].state), 'a=', actions['t'], 's\'=', env.radix_decode(env.encode(s['t'])), 'r=', r['t'])
 
                 for agent_id in ql_agents.keys():
-                    ql_agents[agent_id].learn(new_state=env.encode(s[agent_id]), reward=r[agent_id])
-        env.save_csv()
+                    ql_agents[agent_id].learn(next_state=env.encode(s[agent_id]), reward=r[agent_id])
+        env.save_csv(out_csv, run)
         env.close()
-
 
 
 

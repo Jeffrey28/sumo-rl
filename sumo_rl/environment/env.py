@@ -36,11 +36,12 @@ class SumoEnvironment(MultiAgentEnv):
     """
 
     def __init__(self, net_file, route_file, phases, out_csv_name=None, use_gui=False, num_seconds=20000, max_depart_delay=100000,
-                 time_to_load_vehicles=0, delta_time=5, min_green=10, max_green=50, single_agent=False):
+                 time_to_load_vehicles=0, delta_time=5, min_green=5, max_green=50, single_agent=False):
 
         self._net = net_file
         self._route = route_file
-        if use_gui:
+        self.use_gui = use_gui
+        if self.use_gui:
             self._sumo_binary = sumolib.checkBinary('sumo-gui')
         else:
             self._sumo_binary = sumolib.checkBinary('sumo')
@@ -79,6 +80,8 @@ class SumoEnvironment(MultiAgentEnv):
         ))
         self.action_space = spaces.Discrete(self.num_green_phases)
 
+        self.reward_range = (-float('inf'), float('inf'))
+        self.metadata = {}
         self.spec = ''
 
         self.radix_factors = [s.n for s in self.discrete_observation_space.spaces]
@@ -90,7 +93,7 @@ class SumoEnvironment(MultiAgentEnv):
         
     def reset(self):
         if self.run != 0:
-            self.save_csv()
+            self.save_csv(self.out_csv_name, self.run)
         self.run += 1
         self.metrics = []
 
@@ -100,6 +103,8 @@ class SumoEnvironment(MultiAgentEnv):
                      '--max-depart-delay', str(self.max_depart_delay), 
                      '--waiting-time-memory', '10000', 
                      '--random']
+        if self.use_gui:
+            sumo_cmd.append('--start')
         traci.start(sumo_cmd)
 
         for ts in self.ts_ids:
@@ -124,11 +129,10 @@ class SumoEnvironment(MultiAgentEnv):
         """
         return traci.simulation.getCurrentTime()/1000  # milliseconds to seconds
 
-    def step(self, actions):
+    def step(self, action):
         # act
-        self._apply_actions(actions)
-   
-        # run simulation for delta time
+        self._apply_actions(action)
+
         for _ in range(self.yellow_time): 
             self._sumo_step()
         for ts in self.ts_ids:
@@ -284,8 +288,7 @@ class SumoEnvironment(MultiAgentEnv):
             value = value // self.radix_factors[i]
         return res
 
-    def save_csv(self):
-        if self.out_csv_name is not None:
+    def save_csv(self, out_csv_name, run):
+        if out_csv_name is not None:
             df = pd.DataFrame(self.metrics)
-            df.to_csv(self.out_csv_name + '_ep{}'.format(self.run) + '.csv', index=False)
-
+            df.to_csv(out_csv_name + '_run{}'.format(run) + '.csv', index=False)
